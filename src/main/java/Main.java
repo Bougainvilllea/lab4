@@ -22,15 +22,29 @@ public class Main {
         System.out.println(listVisitors.size());
 
         //task 2
-        HashSet<Book> books = new HashSet<>();
+        List<Book> booksList = new ArrayList<>();
+
         for (Visitor visitor : listVisitors) {
-            books.addAll(visitor.getFavoriteBooks());
+            booksList.addAll(visitor.getFavoriteBooks());
         }
+        HashSet<Book> books = new HashSet<>(booksList);
         System.out.println(books);
         System.out.println(books.size());
 
         //task 3
         System.out.println(books.stream().sorted(Comparator.comparing(Book::getPublishingYear)).toList());
 
+        //task 4
+        System.out.println(books.stream().anyMatch(book -> book.getAuthor().equals("Jane Austen")));
+
+        //task 5
+        listVisitors.stream().max(Comparator.comparing(visitor -> visitor.getFavoriteBooks().size())).ifPresent(visitor -> System.out.println(visitor.getFavoriteBooks().size()));
+
+        //task 6
+        double average = Math.ceil(listVisitors.stream().mapToDouble(visitor -> visitor.getFavoriteBooks().size()).sum() / (double) listVisitors.size());
+        List<Visitor> visitorsSub = listVisitors.stream().filter(Visitor::isSubscribed).toList();
+        System.out.println(visitorsSub.stream().filter(visitor -> visitor.getFavoriteBooks().size() > average).map(visitor -> new Sms(visitor.getPhone(), "you are a bookworm")).toList());
+        System.out.println(visitorsSub.stream().filter(visitor -> visitor.getFavoriteBooks().size() < average).map(visitor -> new Sms(visitor.getPhone(), "read more")).toList());
+        System.out.println(visitorsSub.stream().filter(visitor -> visitor.getFavoriteBooks().size() == average).map(visitor -> new Sms(visitor.getPhone(), "fine")).toList());
     }
 }
